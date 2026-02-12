@@ -149,9 +149,11 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ invoice, onClose }) 
             position: absolute;
             left: 0;
             top: 0;
-            width: 100%;
+            width: 80mm; /* Fix width to standard thermal paper size */
+            font-size: 12px; /* Ensure text is small enough */
+            line-height: 1.2;
             margin: 0;
-            padding: 10px;
+            padding: 2mm;
           }
 
           .no-print {
