@@ -1,0 +1,7 @@
+{
+  "name": "SmartShop AI",
+  "description": "Quản lý bán hàng thông minh với tra cứu giá bằng giọng nói và xuất hóa đơn tự động.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
