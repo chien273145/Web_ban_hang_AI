@@ -1,8 +1,20 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import { VoiceCommandResult, VoiceIntentType } from "../types";
 
+// Initialize lazily to prevent top-level crashes
+let ai: GoogleGenAI | null = null;
 const apiKey = process.env.API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+
+const getAiClient = () => {
+  if (!ai) {
+    if (!apiKey) {
+      console.error("API Key missing");
+      return null;
+    }
+    ai = new GoogleGenAI({ apiKey });
+  }
+  return ai;
+};
 
 export const parseVoiceCommand = async (
   audioBase64: string,
@@ -21,7 +33,7 @@ export const parseVoiceCommand = async (
     const productListString = availableProductNames.join(', ');
 
     let taskDescription = "";
-    
+
     if (specificIntent === VoiceIntentType.CHECK_PRICE) {
       taskDescription = `
       Nhiệm vụ: 
@@ -52,7 +64,12 @@ export const parseVoiceCommand = async (
       ${taskDescription}
     `;
 
-    const response = await ai.models.generateContent({
+    const aiClient = getAiClient();
+    if (!aiClient) {
+      return { intent: VoiceIntentType.UNKNOWN };
+    }
+
+    const response = await aiClient.models.generateContent({
       model: model,
       contents: {
         parts: [
@@ -92,10 +109,10 @@ export const parseVoiceCommand = async (
     if (!jsonText) return { intent: VoiceIntentType.UNKNOWN };
 
     const result = JSON.parse(jsonText) as VoiceCommandResult;
-    
+
     // Fallback: If AI returns unknown but we forced an intent, try to use the forced intent if product is found
     if (specificIntent && result.productName && result.intent === VoiceIntentType.UNKNOWN) {
-        result.intent = specificIntent;
+      result.intent = specificIntent;
     }
 
     return result;
