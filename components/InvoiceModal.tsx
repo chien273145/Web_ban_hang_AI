@@ -35,58 +35,56 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ invoice, onClose }) 
           </button>
         </div>
 
-        {/* Printable Area */}
-        <div className="p-6 overflow-y-auto print-area bg-white" id="invoice-content">
-          <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold uppercase tracking-wider text-indigo-700 print:text-black">SmartShop</h1>
-            <p className="text-sm text-gray-500 print:text-black">Văn Miếu Xích Đằng, TP. Hưng Yên</p>
-            <p className="text-sm text-gray-500 print:text-black">Hotline: 0334994329</p>
+        {/* Printable Area - Designed for 80mm Thermal Printer */}
+        <div className="p-4 overflow-y-auto print-area bg-white" id="invoice-content">
+          <div className="text-center mb-4">
+            <h1 className="text-xl font-bold uppercase tracking-wider text-black">SmartShop</h1>
+            <p className="text-xs text-black">Văn Miếu Xích Đằng, TP. Hưng Yên</p>
+            <p className="text-xs text-black">Hotline: 0334994329</p>
           </div>
 
-          <div className="mb-6 border-b border-gray-300 pb-4 border-dashed print:border-black">
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-600 print:text-black">Mã hóa đơn:</span>
-              <span className="font-mono font-medium print:text-black">{invoice.id}</span>
+          <div className="mb-4 text-xs text-black font-mono border-b border-black border-dashed pb-2">
+            <div className="flex justify-between">
+              <span>HĐ: {invoice.id}</span>
+              <span>{new Date(invoice.date).toLocaleDateString('vi-VN')} {new Date(invoice.date).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-gray-600 print:text-black">Ngày:</span>
-              <span className="print:text-black">{new Date(invoice.date).toLocaleString('vi-VN')}</span>
-            </div>
-             <div className="flex justify-between text-sm">
-              <span className="text-gray-600 print:text-black">Hình thức:</span>
-              <span className="font-bold uppercase print:text-black">{getPaymentMethodName(invoice.paymentMethod)}</span>
+            <div className="flex justify-between mt-1">
+              <span>Hình thức:</span>
+              <span className="font-bold">{getPaymentMethodName(invoice.paymentMethod)}</span>
             </div>
           </div>
 
-          <table className="w-full text-sm mb-6">
-            <thead>
-              <tr className="border-b-2 border-gray-200 print:border-black">
-                <th className="text-left py-2 font-bold text-gray-700 print:text-black">Mặt hàng</th>
-                <th className="text-center py-2 font-bold text-gray-700 print:text-black">SL</th>
-                <th className="text-right py-2 font-bold text-gray-700 print:text-black">Đơn giá</th>
-                <th className="text-right py-2 font-bold text-gray-700 print:text-black">Thành tiền</th>
-              </tr>
-            </thead>
-            <tbody>
-              {invoice.items.map((item, index) => (
-                <tr key={index} className="border-b border-gray-100 print:border-gray-300">
-                  <td className="py-2 text-gray-800 print:text-black font-medium">{item.name}</td>
-                  <td className="text-center py-2 print:text-black">{item.quantity}</td>
-                  <td className="text-right py-2 print:text-black">{FORMAT_CURRENCY(item.price)}</td>
-                  <td className="text-right py-2 font-bold print:text-black">{FORMAT_CURRENCY(item.price * item.quantity)}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="mb-4">
+            {/* Table Header for Print */}
+            <div className="flex text-xs font-bold border-b border-black text-black pb-1 mb-2">
+              <span className="flex-1">Tên SP</span>
+              <span className="w-8 text-center">SL</span>
+              <span className="w-16 text-right">T.Tiền</span>
+            </div>
 
-          <div className="flex justify-between items-center text-xl font-bold border-t-2 border-gray-300 print:border-black pt-4">
-            <span className="print:text-black">Tổng cộng:</span>
-            <span className="text-indigo-600 print:text-black">{FORMAT_CURRENCY(invoice.total)}</span>
+            {/* Items List */}
+            {invoice.items.map((item, index) => (
+              <div key={index} className="mb-2 text-xs text-black">
+                <div className="font-medium">{item.name}</div>
+                <div className="flex justify-between items-center text-gray-600 print:text-black">
+                  <span className="flex-1 italic">{FORMAT_CURRENCY(item.price)}</span>
+                  <span className="w-8 text-center">x{item.quantity}</span>
+                  <span className="w-16 text-right font-medium">{FORMAT_CURRENCY(item.price * item.quantity)}</span>
+                </div>
+              </div>
+            ))}
           </div>
 
-          <div className="mt-8 text-center text-xs text-gray-400 italic print:text-black">
-            <p>Cảm ơn quý khách đã mua hàng!</p>
-            <p>Hẹn gặp lại.</p>
+          <div className="border-t-2 border-black pt-2 mb-6">
+            <div className="flex justify-between items-center text-lg font-bold text-black">
+              <span>TỔNG CỘNG:</span>
+              <span>{FORMAT_CURRENCY(invoice.total)}</span>
+            </div>
+          </div>
+
+          <div className="text-center text-xs text-black italic">
+            <p>-- Cảm ơn quý khách --</p>
+            <p>Hẹn gặp lại!</p>
           </div>
         </div>
 
@@ -97,7 +95,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ invoice, onClose }) 
             className="flex-1 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-100 transition-colors flex items-center justify-center gap-2"
           >
             <CheckCircle2 size={18} />
-            Hoàn tất
+            Đóng
           </button>
           <button
             onClick={handlePrint}
@@ -113,7 +111,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ invoice, onClose }) 
         @media print {
           @page {
             margin: 0;
-            size: auto;
+            size: auto; /* Để máy in tự quyết định khổ giấy */
           }
           
           body {
@@ -128,34 +126,42 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ invoice, onClose }) 
             overflow: hidden;
           }
 
-          /* Reset visibility for the modal wrapper and print area */
+          /* Modal wrapper becomes the print page */
           .fixed {
             position: absolute !important;
             inset: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
             width: 100% !important;
             height: auto !important;
             background: white !important;
             z-index: 9999 !important;
             visibility: visible !important;
             overflow: visible !important;
+            padding: 0 !important;
+            display: block !important;
           }
 
+          /* Print area styling */
           .print-area, .print-area * {
             visibility: visible !important;
             height: auto !important;
-            color: black !important; /* Force black text for thermal printers */
+            color: black !important;
+            overflow: visible !important;
           }
 
           .print-area {
             position: absolute;
             left: 0;
             top: 0;
-            width: 100%;
+            width: 100%; /* Full width of the printer paper */
             margin: 0;
-            padding: 5mm; /* Nhỏ gọn cho giấy in nhiệt */
-            overflow: visible !important;
+            padding: 5mm; /* Lề nhỏ 5mm */
+            box-shadow: none !important;
+            border-radius: 0 !important;
           }
-
+          
+          /* Hide non-print elements explicitly */
           .no-print {
             display: none !important;
           }
