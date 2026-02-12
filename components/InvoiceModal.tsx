@@ -111,7 +111,7 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ invoice, onClose }) 
         @media print {
           @page {
             margin: 0;
-            size: auto; /* Để máy in tự quyết định khổ giấy */
+            size: auto;
           }
           
           body {
@@ -119,14 +119,12 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ invoice, onClose }) 
             color: black;
           }
 
-          /* Hide everything outside the print area */
+          /* Hide everything by default using visibility, NOT display or height */
           body * {
             visibility: hidden;
-            height: 0;
-            overflow: hidden;
           }
 
-          /* Modal wrapper becomes the print page */
+          /* Make the modal wrapper visible but static positioned to avoid scroll issues */
           .fixed {
             position: absolute !important;
             inset: 0 !important;
@@ -134,34 +132,28 @@ export const InvoiceModal: React.FC<InvoiceModalProps> = ({ invoice, onClose }) 
             left: 0 !important;
             width: 100% !important;
             height: auto !important;
-            background: white !important;
-            z-index: 9999 !important;
-            visibility: visible !important;
-            overflow: visible !important;
+            margin: 0 !important;
             padding: 0 !important;
-            display: block !important;
+            background: white !important;
+            visibility: visible !important;
+            z-index: 9999 !important;
           }
 
-          /* Print area styling */
+          /* The print content itself */
           .print-area, .print-area * {
             visibility: visible !important;
-            height: auto !important;
             color: black !important;
-            overflow: visible !important;
           }
 
           .print-area {
             position: absolute;
             left: 0;
             top: 0;
-            width: 100%; /* Full width of the printer paper */
+            width: 100%;
             margin: 0;
-            padding: 5mm; /* Lề nhỏ 5mm */
-            box-shadow: none !important;
-            border-radius: 0 !important;
+            padding: 10px;
           }
-          
-          /* Hide non-print elements explicitly */
+
           .no-print {
             display: none !important;
           }
