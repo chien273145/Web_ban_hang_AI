@@ -66,7 +66,7 @@ export const parseVoiceCommand = async (
 
     const aiClient = getAiClient();
     if (!aiClient) {
-      return { intent: VoiceIntentType.UNKNOWN };
+      return { intent: VoiceIntentType.UNKNOWN, productName: "MISSING_KEY" };
     }
 
     const response = await aiClient.models.generateContent({
@@ -117,8 +117,12 @@ export const parseVoiceCommand = async (
 
     return result;
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("Gemini Error:", error);
+    // Return specific marker if API key is invalid (400/403 often means bad key)
+    if (error.message?.includes('API key') || error.status === 403) {
+      return { intent: VoiceIntentType.UNKNOWN, productName: "INVALID_KEY" };
+    }
     return { intent: VoiceIntentType.UNKNOWN };
   }
 };

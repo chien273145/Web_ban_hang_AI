@@ -282,7 +282,11 @@ const App: React.FC = () => {
 
     console.log("AI Result:", result);
 
-    if (result.intent === VoiceIntentType.UNKNOWN) {
+    if (result.productName === "MISSING_KEY") {
+      alert("LỖI: Chưa cấu hình API Key trên Vercel.\n\nVui lòng vào Settings > Environment Variables trên Vercel và thêm 'GEMINI_API_KEY'.");
+    } else if (result.productName === "INVALID_KEY") {
+      alert("LỖI: API Key không hợp lệ.");
+    } else if (result.intent === VoiceIntentType.UNKNOWN) {
       alert(`Không nghe rõ tên sản phẩm. Vui lòng nói lại.`);
     } else if (result.productName) {
       const matchedProduct = products.find(p => p.name.toLowerCase() === result.productName?.toLowerCase());
